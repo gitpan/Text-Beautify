@@ -1,0 +1,45 @@
+Text/Beautify version 0.01
+==========================
+
+Beautifies text
+
+  use Text::Beautify;
+
+  $text = "badly written text ,,you know ?"
+
+  $new_text = beautify($text);
+  # $new_text now holds "Badly written text, you know?"
+
+  enable_feature('repeated_punctuation'); # enables the feature
+  disable_feature('trailing_space');      # disables the feature
+
+  @features_enables = enabled_features();
+
+  @all_features = features();
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+No dependencies
+
+SEE ALSO
+
+The POD documentation in Beautify.pm
+
+COPYRIGHT AND LICENCE
+
+Put the correct copyright and licence information here.
+
+Copyright (C) 2004 Jose Alves de Castro
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+

@@ -1,0 +1,9 @@
+Revision history for Perl extension Text::Beautify.
+
+0.01  Fri May 14 02:29:08 2004
+	- first release ready
+
+0.01  Fri May 14 01:16:08 2004
+	- original version; created by h2xs 1.22 with options
+		-XAn Text::Beautify
+
