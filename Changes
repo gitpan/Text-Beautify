@@ -1,5 +1,8 @@
 Revision history for Perl extension Text::Beautify.
 
+0.06  Wed Sep 22 00:11:05 2004
+	- Perl required version is now 5.006 (was 5.008)
+
 0.05  Fri Sep 17 22:28:05 2004
 	- added META.yml
 	- added object interface (hurrah!)
