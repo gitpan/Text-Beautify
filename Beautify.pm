@@ -9,15 +9,15 @@ require Exporter;
 our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
-	beautify enable_feature disable_feature features enabled_features
-	enable_all disable_all
+        beautify enable_feature disable_feature features enabled_features
+        enable_all disable_all
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw();
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =head1 NAME
 
@@ -48,6 +48,54 @@ Text::Beautify - Beautifies text
 
   enable_all();
   disable_all();
+
+=head1 DESCRIPTION
+
+Beautifies text. This involves operations like squeezing double spaces,
+removing spaces from the beginning and end of lines, upper casing the
+first character in a string, etc.
+
+You can enable / disable features with I<enable_feature> /
+I<disable_feature>. These commands return a true value if they
+are successful.
+
+To know which features are beautified, see FEATURES
+
+=head1 FEATURES
+
+All features are enabled by default
+
+=over 4
+
+=item * heading_space
+
+        Removes heading spaces
+
+=item * trailing_space
+
+        Removes trailing spaces
+
+=item * double_spaces
+
+        Squeezes double spaces
+
+=item * repeated_punctuation
+
+        Squeezes repeated punctuation
+
+=item * space_in_front_of_punctuation
+
+        Removes spaces in front of punctuation
+
+=item * space_after_punctuation
+
+        Puts a spaces after punctuation
+
+=item * uppercase_first
+
+        Uppercases the first character in the string
+
+=back
 
 =cut
 
@@ -85,7 +133,24 @@ BEGIN {
   %status = map { ( $_ , 1 ) } @features; # all features enabled by default
 }
 
-#
+=head1 METHODS
+
+=head2 new
+
+Creates a new Text::Beautify object
+
+=cut
+
+sub new {
+  my ($self,@text) = @_;
+  bless \@text, 'Text::Beautify';
+}
+
+=head2 beautify
+
+Applies all the enabled features
+
+=cut
 
 sub beautify {
 
@@ -98,8 +163,7 @@ sub beautify {
     @text = wantarray ? @_ : $_[0];
   }
 
-  my @results;
-  for (@text) {
+  for (join "\n", @text) {
 
     for my $feature (@features) {
       next unless $status{$feature};
@@ -107,112 +171,96 @@ sub beautify {
       ($str,$end) = ("<$feature>","</$feature>") if $debug;
 
       for my $f (@{$features{$feature}}) {
-	s/$$f[0]/$str . (eval $$f[1]) . $end/ge;
+        s/$$f[0]/$str . (eval $$f[1]) . $end/ge;
       }
     }
 
-    push @results, $_;
+    return $_;
   }
-  return wantarray ? @results : $results[0];
 
 }
 
-sub auto_feature {
+=head2 enabled_features
+
+Returns a list with the enabled features
+
+=cut
+
+sub enabled_features { grep $status{$_}, keys %features; }
+
+=head2 features
+
+Returns a list containing all the features
+
+=cut
+
+sub features         { keys %features; }
+
+=head2 enable_feature
+
+Enables a feature
+
+=cut
+
+sub enable_feature   { _auto_feature(1,@_); }
+
+=head2 disable_feature
+
+Disables a feature
+
+=cut
+
+sub disable_feature  { _auto_feature(0,@_); }
+
+=head2 enable_all
+
+Enables all features
+
+=cut
+
+sub enable_all       { _auto_feature(1,features()) }
+
+=head2 disable_all
+
+Disables all features
+
+=cut
+
+sub disable_all      { _auto_feature(0,features()) }
+
+sub _auto_feature {
   my $newstatus = shift;
   for (@_) { defined $features{$_} || return undef; }
   for (@_) { $status{$_} = $newstatus; }
   1
 }
 
-sub enabled_features { grep $status{$_}, keys %features; }
-sub features         { keys %features; }
-
-sub enable_feature   { auto_feature(1,@_); }
-sub disable_feature  { auto_feature(0,@_); }
-
-sub enable_all       { auto_feature(1,features()) }
-sub disable_all      { auto_feature(0,features()) }
-
-# OO interface
-
-sub new {
-  my ($self,@text) = @_;
-  bless \@text, 'Text::Beautify';
-}
-
-# debug
-
-sub debug {
-  $debug = shift || return undef;
-}
-
 1;
 __END__
 
-=head1 DESCRIPTION
+=head1 TO DO
 
-Beautifies text. This involves operations like squeezing double spaces,
-removing spaces from the beginning and end of lines, upper casing the
-first character in a string, etc.
+=over 6
 
-You can enable / disable features with I<enable_feature> /
-I<disable_feature>. These commands return a true value if they
-are successful.
+=item * Allow the user to select the order in which features are applied
 
-To know which features are beautified, see FEATURES
-
-=head1 FEATURES
-
-All features are enabled by default
-
-=over 4
-
-=item * heading_space
-
-	Removes heading spaces
-
-=item * trailing_space
-
-	Removes trailing spaces
-
-=item * double_spaces
-
-	Squeezes double spaces
-
-=item * repeated_punctuation
-
-	Squeezes repeated punctuation
-
-=item * space_in_front_of_punctuation
-
-	Removes spaces in front of punctuation
-
-=item * space_after_punctuation
-
-	Puts a spaces after punctuation
-
-=item * uppercase_first
-
-	Uppercases the first character in the string
+=item * Allow creation of new features
 
 =back
 
 =head1 BUGS
 
-Each line is treated independently. This means a sentence comprising two lines
-will get it's second line's first character uppercased... must solve that ASAP.
-
 Smiles such as "this :-(" are turned into "this:-("
 
 =head1 AUTHOR
 
-Jose Alves de Castro, E<lt>cog [at] cpan [dot] org<gt>
+Jose Castro, C<< <cog@cpan.org> >>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT & LICENSE
 
-Copyright 2004 by Jose Alves de Castro
+Copyright 2004 Jose Castro, All Rights Reserved.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 =cut

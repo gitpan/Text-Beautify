@@ -1,5 +1,10 @@
 Revision history for Perl extension Text::Beautify.
 
+0.07  Wed Nov 03 19:39:00 2004
+	- fixed the newline bug
+	- improved the documentation
+	- added pod.t and pod-coverage.t to the tests directory
+
 0.06  Wed Sep 22 00:11:05 2004
 	- Perl required version is now 5.006 (was 5.008)
 
