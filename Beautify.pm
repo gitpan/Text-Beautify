@@ -17,7 +17,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw();
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -44,23 +44,23 @@ Text::Beautify - Beautifies text
 
 =cut
 
-my (%features,@features);
-my (%status,%special);
+my (%features,@features,%status);
 
 BEGIN {
+  my $empt = '\'\'';
   %features = (
-    heading_space                 => [[qr/^ +/                  , ''      ]],
-    trailing_space                => [[qr/ +$/                  , ''      ]],
-    space_in_front_of_punctuation => [[qr/ +(?=[;:,!?])/        , ''      ]],
-    double_spaces                 => [[qr/  +/                  , ' '     ]],
-    repeated_punctuation          => [[qr/([;:,!?])(?=\1)/      , ''      ],
-                                      [qr/\.{3,}/               , '...'   ],
-                                      [qr/(?<!\.)\.\.(?!\.)/    , '.'     ]],
+    heading_space                 => [[qr/^ +/                    , $empt    ]],
+    trailing_space                => [[qr/ +$/                    , $empt    ]],
+    space_in_front_of_punctuation => [[qr/ +(?=[;:,!?])/          , $empt    ]],
+    double_spaces                 => [[qr/  +/                    , '\' \''  ]],
+    repeated_punctuation          => [[qr/([;:,!?])(?=\1)/        , $empt    ],
+                                      [qr/\.{3,}/                 , '\'...\''],
+                                      [qr/(?<!\.)\.\.(?!\.)/      , '\'.\''  ]],
 
-    space_after_punctuation       => [[qr/[;:,!?](?=[^ ])/      , '"$& "' ]],
-    uppercase_first               => [[qr/^[[:^alnum:]]*[a-z]/i , 'uc($&)'],
-                                      [qr/(?<=[!?] )([a-z])/    , 'uc($1)'],
-                                      [qr/(?<=[^.]\. )([a-z])/  , 'uc($1)']],
+    space_after_punctuation       => [[qr/([;:,!?])(?=[^ ])/      , '"$1 "'  ]],
+    uppercase_first               => [[qr/^([[:^alnum:]]*[a-z])/i , 'uc($1)' ],
+                                      [qr/(?<=[!?] )([a-z])/      , 'uc($1)' ],
+                                      [qr/(?<=[^.]\. )([a-z])/    , 'uc($1)' ]],
   );
 
   @features = qw(
@@ -69,17 +69,17 @@ BEGIN {
     double_spaces
     repeated_punctuation
     space_in_front_of_punctuation
-
     space_after_punctuation
     uppercase_first
   );
 
-  %special = map {$_ => 1} qw(space_after_punctuation uppercase_first);
-
   %status = map { ( $_ , 1 ) } @features; # all features enabled by default
 }
 
+#
+
 sub beautify {
+  #print $_[0] if $_[0] eq 'Text::Beautify';
   my @text = wantarray ? @_ : $_[0];
   my @results;
   for (@text) {
@@ -88,16 +88,8 @@ sub beautify {
       next unless $status{$feature};
 
       for my $f (@{$features{$feature}}) {
-
-        if ($special{$feature}) { # advanced feature
-          s/$$f[0]/eval $$f[1]/ge;
-        }
-        else {                  # regular feature
-          s/$$f[0]/$$f[1]/g;
-        }
-
+        s/$$f[0]/eval $$f[1]/ge;
       }
-
     }
 
     push @results, $_;
@@ -120,6 +112,13 @@ sub disable_feature  { auto_feature(0,@_); }
 
 sub enable_all       { auto_feature(1,features()) }
 sub disable_all      { auto_feature(0,features()) }
+
+# OO interface
+
+sub new {
+  my ($self,@text) = @_;
+  bless \@text, 'Text::Beautify';
+}
 
 1;
 __END__
