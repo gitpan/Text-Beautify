@@ -17,7 +17,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw();
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 NAME
 
@@ -44,6 +44,7 @@ Text::Beautify - Beautifies text
 
 =cut
 
+my $debug = 0;
 my (%features,@features,%status);
 
 BEGIN {
@@ -57,8 +58,9 @@ BEGIN {
                                       [qr/\.{3,}/                 , '\'...\''],
                                       [qr/(?<!\.)\.\.(?!\.)/      , '\'.\''  ]],
 
-    space_after_punctuation       => [[qr/([;:,!?])(?=[^ ])/      , '"$1 "'  ]],
-    uppercase_first               => [[qr/^([[:^alnum:]]*[a-z])/i , 'uc($1)' ],
+    space_after_punctuation       =>[[qr/([;:,!?])(?=[[:alnum:]])/, '"$1 "'  ]],
+    uppercase_first               => [[qr/([.!?]+\s*[a-z])/i      , 'uc($1)' ],
+                                      [qr/^(\s*[[:alnum:]])/      , 'uc($1)' ],
                                       [qr/(?<=[!?] )([a-z])/      , 'uc($1)' ],
                                       [qr/(?<=[^.]\. )([a-z])/    , 'uc($1)' ]],
   );
@@ -86,9 +88,11 @@ sub beautify {
 
     for my $feature (@features) {
       next unless $status{$feature};
+      my ($str,$end) = ('','');
+      ($str,$end) = ("<$feature>","</$feature>") if $debug;
 
       for my $f (@{$features{$feature}}) {
-        s/$$f[0]/eval $$f[1]/ge;
+        s/$$f[0]/$str . (eval $$f[1]) . $end/ge;
       }
     }
 
@@ -118,6 +122,12 @@ sub disable_all      { auto_feature(0,features()) }
 sub new {
   my ($self,@text) = @_;
   bless \@text, 'Text::Beautify';
+}
+
+# debug
+
+sub debug {
+  $debug = shift || return undef;
 }
 
 1;
@@ -170,6 +180,13 @@ All features are enabled by default
 	Uppercases the first character in the string
 
 =back
+
+=head1 BUGS
+
+Each line is treated independently. This means a sentence comprising two lines
+will get it's second line's first character uppercased... must solve that ASAP.
+
+Smiles such as "this :-(" are turned into "this:-("
 
 =head1 MESSAGE FROM THE AUTHOR
 

@@ -28,7 +28,7 @@ $string{double_spaces} =
 $string{repeated_punctuation} =
 	" some people do all  kind of stupid things ,you know ? ";
 $string{space_after_punctuation} =
-	" some people do all  kind of stupid things , , you know ? ? ";
+	" some people do all  kind of stupid things ,, you know ?? ";
 $string{uppercase_first} =
 	" Some people do all  kind of stupid things ,,you know ?? ";
 
@@ -64,8 +64,8 @@ is(beautify('oK'),'OK');
 is(beautify('Ok'),'Ok');
 
 is(beautify('Wait.. wait'),'Wait. Wait');
-is(beautify('Wait... wait'),'Wait... wait');
-is(beautify('Wait.... wait'),'Wait... wait');
+is(beautify('Wait... wait'),'Wait... Wait');
+is(beautify('Wait.... wait'),'Wait... Wait');
 is(beautify('I\'m ok'),'I\'m ok');
 
 __END__

@@ -1,4 +1,4 @@
-Text/Beautify version 0.03
+Text/Beautify version 0.04
 ==========================
 
 Beautifies text
@@ -29,6 +29,13 @@ To install this module type the following:
 DEPENDENCIES
 
 No dependencies
+
+BUGS
+
+Each line is treated independently. This means a sentence comprising two lines
+will get it's second line's first character uppercased... must solve that ASAP.
+
+Smiles such as "this :-(" are turned into "this:-("
 
 SEE ALSO
 
