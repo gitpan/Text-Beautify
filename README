@@ -1,4 +1,4 @@
-Text/Beautify version 0.01
+Text/Beautify version 0.02
 ==========================
 
 Beautifies text
@@ -35,8 +35,6 @@ SEE ALSO
 The POD documentation in Beautify.pm
 
 COPYRIGHT AND LICENCE
-
-Put the correct copyright and licence information here.
 
 Copyright (C) 2004 Jose Alves de Castro
 

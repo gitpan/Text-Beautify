@@ -10,15 +10,14 @@ our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
 	beautify enable_feature disable_feature features enabled_features
+	enable_all disable_all
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our @EXPORT = qw(
-	beautify enable_feature disable_feature features enabled_features
-);
+our @EXPORT = qw();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
@@ -40,21 +39,28 @@ Text::Beautify - Beautifies text
 
   @all_features = features();
 
+  enable_all();
+  disable_all();
+
 =cut
 
 my (%features,@features);
-my  %status;
+my (%status,%special);
 
 BEGIN {
   %features = (
-    heading_space                 => [ qr/^ +/                 , ''        ],
-    trailing_space                => [ qr/ +$/                 , ''        ],
-    space_in_front_of_punctuation => [ qr/ +(?=[[:punct:]])/   , ''        ],
-    double_spaces                 => [ qr/  +/                 , ' '       ],
-    repeated_punctuation          => [ qr/([[:punct:]])(?=\1)/ , ''        ],
+    heading_space                 => [[qr/^ +/                  , ''      ]],
+    trailing_space                => [[qr/ +$/                  , ''      ]],
+    space_in_front_of_punctuation => [[qr/ +(?=[;:,!?])/        , ''      ]],
+    double_spaces                 => [[qr/  +/                  , ' '     ]],
+    repeated_punctuation          => [[qr/([;:,!?])(?=\1)/      , ''      ],
+                                      [qr/\.{3,}/               , '...'   ],
+                                      [qr/(?<!\.)\.\.(?!\.)/    , '.'     ]],
 
-    _space_after_punctuation      => [ qr/[[:punct:]](?=[^ ])/  , '$&." "' ],
-    _uppercase_first              => [ qr/^[[:^alnum:]]*[a-z]/  , 'uc($&)' ],
+    space_after_punctuation       => [[qr/[;:,!?](?=[^ ])/      , '"$& "' ]],
+    uppercase_first               => [[qr/^[[:^alnum:]]*[a-z]/i , 'uc($&)'],
+                                      [qr/(?<=[!?] )([a-z])/    , 'uc($1)'],
+                                      [qr/(?<=[^.]\. )([a-z])/  , 'uc($1)']],
   );
 
   @features = qw(
@@ -63,25 +69,33 @@ BEGIN {
     double_spaces
     repeated_punctuation
     space_in_front_of_punctuation
-    _space_after_punctuation
-    _uppercase_first
+
+    space_after_punctuation
+    uppercase_first
   );
+
+  %special = map {$_ => 1} qw(space_after_punctuation uppercase_first);
 
   %status = map { ( $_ , 1 ) } @features; # all features enabled by default
 }
 
 sub beautify {
+  my @text = wantarray ? @_ : $_[0];
   my @results;
-  for (wantarray ? @_ : $_[0]) {
+  for (@text) {
 
     for my $feature (@features) {
       next unless $status{$feature};
 
-      if ($feature =~ /^_/) { # advanced feature
-        s/$features{$feature}[0]/eval $features{$feature}[1]/ge;
-      }
-      else {                  # regular feature
-        s/$features{$feature}[0]/$features{$feature}[1]/g;
+      for my $f (@{$features{$feature}}) {
+
+        if ($special{$feature}) { # advanced feature
+          s/$$f[0]/eval $$f[1]/ge;
+        }
+        else {                  # regular feature
+          s/$$f[0]/$$f[1]/g;
+        }
+
       }
 
     }
@@ -104,6 +118,8 @@ sub features         { keys %features; }
 sub enable_feature   { auto_feature(1,@_); }
 sub disable_feature  { auto_feature(0,@_); }
 
+sub enable_all       { auto_feature(1,features()) }
+sub disable_all      { auto_feature(0,features()) }
 
 1;
 __END__
@@ -146,11 +162,11 @@ All features are enabled by default
 
 	Removes spaces in front of punctuation
 
-=item * _space_after_punctuation
+=item * space_after_punctuation
 
 	Puts a spaces after punctuation
 
-=item * _uppercase_first
+=item * uppercase_first
 
 	Uppercases the first character in the string
 
@@ -160,7 +176,7 @@ All features are enabled by default
 
 If you're using this module, please drop me a line to my e-mail. Tell
 me what you're doing with it. Also, feel free to suggest new
-bugs^H^H^H^H^H features O:-)
+bugs^H^H^H^H^H features.
 
 =head1 AUTHOR
 

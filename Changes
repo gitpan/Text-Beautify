@@ -1,5 +1,13 @@
 Revision history for Perl extension Text::Beautify.
 
+0.02  Fri May 30 00:27:08 2004
+	- added the possibility for a feature to contain several steps
+	- corrected features space_in_front_of_punctuation,
+	  repeated_punctuation and _space_after_punctuation, _uppercase_first
+	- special features no longer require a heading underscore
+	- _space_after_punctuation becomes space_after_punctuation
+	- _uppercase_first becomes uppercase_first
+
 0.01  Fri May 14 02:29:08 2004
 	- first release ready
 

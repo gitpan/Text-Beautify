@@ -5,8 +5,9 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 10;
-BEGIN { use_ok('Text::Beautify') };
+#use Test::More tests => 10;
+use Test::More 'no_plan';
+BEGIN { use_ok('Text::Beautify',qw(beautify enable_feature disable_feature features enabled_features enable_all disable_all)) };
 
 #########################
 
@@ -22,13 +23,13 @@ $string{trailing_space} =
 	" some people do all  kind of stupid things ,,you know ??";
 $string{space_in_front_of_punctuation} =
 	" some people do all  kind of stupid things,,you know?? ";
-$string{space_after_punctuation} =
-	" some people do all  kind of stupid things ,, you know ?? ";
 $string{double_spaces} =
 	" some people do all kind of stupid things ,,you know ?? ";
 $string{repeated_punctuation} =
 	" some people do all  kind of stupid things ,you know ? ";
-$string{_uppercase_first} =
+$string{space_after_punctuation} =
+	" some people do all  kind of stupid things , , you know ? ? ";
+$string{uppercase_first} =
 	" Some people do all  kind of stupid things ,,you know ?? ";
 
 is(enabled_features(),features());
@@ -38,6 +39,8 @@ is(enabled_features(),features());
 ok(disable_feature(features()));
 is(enabled_features(),0);
 is(beautify($bad_string),$bad_string);
+
+@allfeatures = features();
 
 for (@allfeatures) {
   disable_feature(@allfeatures);
@@ -49,6 +52,21 @@ for (@allfeatures) {
 
 ok(enable_feature(features()));
 is(beautify($bad_string),$good_string);
+
+disable_all();
+is(beautify($bad_string),$bad_string);
+enable_all();
+is(beautify($bad_string),$good_string);
+
+is(beautify('ok'),'Ok');
+is(beautify('OK'),'OK');
+is(beautify('oK'),'OK');
+is(beautify('Ok'),'Ok');
+
+is(beautify('Wait.. wait'),'Wait. Wait');
+is(beautify('Wait... wait'),'Wait... wait');
+is(beautify('Wait.... wait'),'Wait... wait');
+is(beautify('I\'m ok'),'I\'m ok');
 
 __END__
 
