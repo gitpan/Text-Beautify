@@ -1,5 +1,9 @@
 Revision history for Perl extension Text::Beautify.
 
+0.05  Fri Sep 17 22:28:05 2004
+	- added META.yml
+	- added object interface (hurrah!)
+
 0.04  Mon Jul 12 20:07:08 2004
 	- added a debug feature (useful for development)
 	- uppercase_first no longer turns "(this)" into "(This)"

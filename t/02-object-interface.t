@@ -5,7 +5,8 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 34;
+#use Test::More tests => 10;
+use Test::More 'no_plan';
 BEGIN { use_ok('Text::Beautify',qw(beautify enable_feature disable_feature features enabled_features enable_all disable_all)) };
 
 #########################
@@ -30,6 +31,12 @@ $string{space_after_punctuation} =
 	" some people do all  kind of stupid things ,, you know ?? ";
 $string{uppercase_first} =
 	" Some people do all  kind of stupid things ,,you know ?? ";
+
+my $object = Text::Beautify::new("zbr");
+
+isa_ok($object,"Text::Beautify");
+
+is($object->enabled_features(),$object->features());
 
 is(enabled_features(),features());
 ok(disable_feature(features()));

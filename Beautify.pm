@@ -17,7 +17,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw();
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 NAME
 
@@ -31,6 +31,13 @@ Text::Beautify - Beautifies text
 
   $new_text = beautify($text);
   # $new_text now holds "Badly written text, you know?"
+
+  # or
+
+  $text = Text::Beautify->new("badly written text ,,you know ?");
+  $new_text = $text->beautify;
+
+  # and also
 
   enable_feature('repeated_punctuation'); # enables the feature
   disable_feature('trailing_space');      # disables the feature
@@ -81,8 +88,16 @@ BEGIN {
 #
 
 sub beautify {
-  #print $_[0] if $_[0] eq 'Text::Beautify';
-  my @text = wantarray ? @_ : $_[0];
+
+  my @text;
+  if (ref($_[0]) eq 'Text::Beautify') {
+    my $self = shift;
+    @text = @$self;
+  }
+  else {
+    @text = wantarray ? @_ : $_[0];
+  }
+
   my @results;
   for (@text) {
 
@@ -92,13 +107,14 @@ sub beautify {
       ($str,$end) = ("<$feature>","</$feature>") if $debug;
 
       for my $f (@{$features{$feature}}) {
-        s/$$f[0]/$str . (eval $$f[1]) . $end/ge;
+	s/$$f[0]/$str . (eval $$f[1]) . $end/ge;
       }
     }
 
     push @results, $_;
   }
   return wantarray ? @results : $results[0];
+
 }
 
 sub auto_feature {
@@ -187,12 +203,6 @@ Each line is treated independently. This means a sentence comprising two lines
 will get it's second line's first character uppercased... must solve that ASAP.
 
 Smiles such as "this :-(" are turned into "this:-("
-
-=head1 MESSAGE FROM THE AUTHOR
-
-If you're using this module, please drop me a line to my e-mail. Tell
-me what you're doing with it. Also, feel free to suggest new
-bugs^H^H^H^H^H features.
 
 =head1 AUTHOR
 
