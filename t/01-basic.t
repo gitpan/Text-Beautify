@@ -13,23 +13,23 @@ BEGIN { use_ok('Text::Beautify',qw(beautify enable_feature disable_feature featu
 # Insert your test code below, the Test::More module is use()ed here so read
 # its man page ( perldoc Test::More ) for help writing this test script.
 
-$bad_string  = " some people do all  kind of stupid things ,,you know ?? ";
-$good_string = "Some people do all kind of stupid things, you know?";
+$bad_string  = " some people do all  kind of stupid things ,,you know ?? :-) ";
+$good_string = "Some people do all kind of stupid things, you know? :-)";
 
 $string{heading_space} =
-	"some people do all  kind of stupid things ,,you know ?? ";
+	"some people do all  kind of stupid things ,,you know ?? :-) ";
 $string{trailing_space} =
-	" some people do all  kind of stupid things ,,you know ??";
+	" some people do all  kind of stupid things ,,you know ?? :-)";
 $string{space_in_front_of_punctuation} =
-	" some people do all  kind of stupid things,,you know?? ";
+	" some people do all  kind of stupid things,,you know?? :-) ";
 $string{double_spaces} =
-	" some people do all kind of stupid things ,,you know ?? ";
+	" some people do all kind of stupid things ,,you know ?? :-) ";
 $string{repeated_punctuation} =
-	" some people do all  kind of stupid things ,you know ? ";
+	" some people do all  kind of stupid things ,you know ? :-) ";
 $string{space_after_punctuation} =
-	" some people do all  kind of stupid things ,, you know ?? ";
+	" some people do all  kind of stupid things ,, you know ?? :-) ";
 $string{uppercase_first} =
-	" Some people do all  kind of stupid things ,,you know ?? ";
+	" Some people do all  kind of stupid things ,,you know ?? :-) ";
 
 is(enabled_features(),features());
 ok(disable_feature(features()));

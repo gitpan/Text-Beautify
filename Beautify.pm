@@ -17,7 +17,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw();
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 =head1 NAME
 
@@ -107,7 +107,7 @@ BEGIN {
   %features = (
     heading_space                 => [[qr/^ +/                    , $empt    ]],
     trailing_space                => [[qr/ +$/                    , $empt    ]],
-    space_in_front_of_punctuation => [[qr/ +(?=[;:,!?])/          , $empt    ]],
+    space_in_front_of_punctuation => [[qr/ +(?=[,!?]|[:;](?![-)(]))/,$empt   ]],
     double_spaces                 => [[qr/  +/                    , '\' \''  ]],
     repeated_punctuation          => [[qr/([;:,!?])(?=\1)/        , $empt    ],
                                       [qr/\.{3,}/                 , '\'...\''],
@@ -247,10 +247,6 @@ __END__
 =item * Allow creation of new features
 
 =back
-
-=head1 BUGS
-
-Smiles such as "this :-(" are turned into "this:-("
 
 =head1 AUTHOR
 

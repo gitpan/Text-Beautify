@@ -1,4 +1,4 @@
-Text/Beautify version 0.07
+Text/Beautify version 0.08
 ==========================
 
 Text::Beautify - Beautifies text
@@ -120,13 +120,6 @@ Disables all features
 =item * Allow creation of new features
 
 =back
-
-=head1 BUGS
-
-Each line is treated independently. This means a sentence comprising two lines
-will get it's second line's first character uppercased... must solve that ASAP.
-
-Smiles such as "this :-(" are turned into "this:-("
 
 =head1 AUTHOR
 
